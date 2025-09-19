@@ -1,0 +1,43 @@
+# 保险感知Agent配置示例
+
+# 配置LLM模型\llms:
+  default_llm:
+    _type: openai_chat
+    model: gpt-3.5-turbo
+    api_key: ${OPENAI_API_KEY}
+
+# 配置工具
+functions:
+  internet_search:
+    _type: internet_search
+    description: "搜索互联网获取一般信息"
+    search_engine: google
+    num_results: 3
+  
+  pingan_search:
+    _type: pingan_search
+    description: "搜索平安保险相关信息、政策和产品"
+    api_key: ${PINGAN_API_KEY}
+  
+  current_datetime:
+    _type: current_datetime
+    description: "获取当前日期和时间"
+
+# 配置工作流 - 使用自定义的保险感知Agent
+workflow:
+  _type: insurance_aware_agent  # 这是我们自定义的Agent类型
+  llm_name: default_llm
+  tool_names:
+    - internet_search
+    - pingan_search
+    - current_datetime
+  verbose: true
+
+# 评估配置(可选)
+eval:
+  _type: rag
+  dataset_path: "path/to/eval/dataset.json"
+  metrics:
+    - accuracy
+    - relevance
+    - response_time

@@ -5,144 +5,144 @@
 
 set -e
 
-# echo "🚀 NVIDIA NeMo Agent Toolkit AI对话机器人 - 一键安装"
-# echo "=================================================="
+echo "🚀 NVIDIA NeMo Agent Toolkit AI对话机器人 - 一键安装"
+echo "=================================================="
 
-# # 检测操作系统
-# detect_os() {
-#     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-#         echo "检测到操作系统: Linux"
-#         OS="linux"
-#     elif [[ "$OSTYPE" == "darwin"* ]]; then
-#         echo "检测到操作系统: macOS"
-#         OS="macos"
-#     elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
-#         echo "检测到操作系统: Windows"
-#         OS="windows"
-#     else
-#         echo "⚠️  未知操作系统: $OSTYPE"
-#         echo "请在 Linux、macOS 或 Windows WSL 环境中运行此脚本"
-#         exit 1
-#     fi
-# }
+# 检测操作系统
+detect_os() {
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo "检测到操作系统: Linux"
+        OS="linux"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "检测到操作系统: macOS"
+        OS="macos"
+    elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
+        echo "检测到操作系统: Windows"
+        OS="windows"
+    else
+        echo "⚠️  未知操作系统: $OSTYPE"
+        echo "请在 Linux、macOS 或 Windows WSL 环境中运行此脚本"
+        exit 1
+    fi
+}
 
-# # 检查必要工具
-# check_requirements() {
-#     echo "📋 检查系统要求..."
+# 检查必要工具
+check_requirements() {
+    echo "📋 检查系统要求..."
     
-#     # 检查Python
-#     if ! command -v python3 &> /dev/null; then
-#         echo "❌ Python 3 未安装"
-#         echo "请先安装 Python 3.12 或更高版本"
-#         exit 1
-#     fi
+    # 检查Python
+    if ! command -v python3 &> /dev/null; then
+        echo "❌ Python 3 未安装"
+        echo "请先安装 Python 3.12 或更高版本"
+        exit 1
+    fi
     
-#     python_version=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1-2)
-#     echo "✅ Python 版本: $python_version"
+    python_version=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1-2)
+    echo "✅ Python 版本: $python_version"
     
-#     # 检查Node.js
-#     if ! command -v node &> /dev/null; then
-#         echo "❌ Node.js 未安装"
-#         echo "请先安装 Node.js 18 或更高版本"
-#         exit 1
-#     fi
+    # 检查Node.js
+    if ! command -v node &> /dev/null; then
+        echo "❌ Node.js 未安装"
+        echo "请先安装 Node.js 18 或更高版本"
+        exit 1
+    fi
     
-#     node_version=$(node --version)
-#     echo "✅ Node.js 版本: $node_version"
+    node_version=$(node --version)
+    echo "✅ Node.js 版本: $node_version"
     
-#     # 检查Git
-#     if ! command -v git &> /dev/null; then
-#         echo "❌ Git 未安装"
-#         echo "请先安装 Git"
-#         exit 1
-#     fi
+    # 检查Git
+    if ! command -v git &> /dev/null; then
+        echo "❌ Git 未安装"
+        echo "请先安装 Git"
+        exit 1
+    fi
     
-#     echo "✅ Git 已安装"
-# }
+    echo "✅ Git 已安装"
+}
 
-# # 安装uv包管理器
-# install_uv() {
-#     echo "📦 安装 uv 包管理器..."
+# 安装uv包管理器
+install_uv() {
+    echo "📦 安装 uv 包管理器..."
     
-#     if ! command -v uv &> /dev/null; then
-#         echo "正在下载并安装 uv..."
-#         curl -LsSf https://astral.sh/uv/install.sh | sh
+    if ! command -v uv &> /dev/null; then
+        echo "正在下载并安装 uv..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
         
-#         # 添加到PATH
-#         export PATH="$HOME/.local/bin:$PATH"
+        # 添加到PATH
+        export PATH="$HOME/.local/bin:$PATH"
         
-#         if ! command -v uv &> /dev/null; then
-#             echo "❌ uv 安装失败"
-#             exit 1
-#         fi
-#     fi
+        if ! command -v uv &> /dev/null; then
+            echo "❌ uv 安装失败"
+            exit 1
+        fi
+    fi
     
-#     echo "✅ uv 包管理器已安装"
-# }
+    echo "✅ uv 包管理器已安装"
+}
 
-# # 克隆和设置项目
-# setup_project() {
-#     echo "📥 设置项目..."
+# 克隆和设置项目
+setup_project() {
+    echo "📥 设置项目..."
     
-#     # 记录当前目录
-#     PROJECT_ROOT=$(pwd)
+    # 记录当前目录
+    PROJECT_ROOT=$(pwd)
     
-#     # 如果目录不存在，克隆项目
-#     if [ ! -d "NeMo-Agent-Toolkit" ]; then
-#         echo "正在克隆 NVIDIA NeMo Agent Toolkit..."
-#         git clone https://github.com/NVIDIA/NeMo-Agent-Toolkit.git
+    # 如果目录不存在，克隆项目
+    if [ ! -d "NeMo-Agent-Toolkit" ]; then
+        echo "正在克隆 NVIDIA NeMo Agent Toolkit..."
+        git clone https://github.com/NVIDIA/NeMo-Agent-Toolkit.git
         
-#         echo "正在初始化子模块..."
-#         cd NeMo-Agent-Toolkit
-#         git submodule update --init --recursive
-#         cd "$PROJECT_ROOT"
-#     else
-#         echo "项目目录已存在..."
-#     fi
+        echo "正在初始化子模块..."
+        cd NeMo-Agent-Toolkit
+        git submodule update --init --recursive
+        cd "$PROJECT_ROOT"
+    else
+        echo "项目目录已存在..."
+    fi
     
-#     # 进入NeMo-Agent-Toolkit目录进行Python环境设置
-#     cd NeMo-Agent-Toolkit
+    # 进入NeMo-Agent-Toolkit目录进行Python环境设置
+    cd NeMo-Agent-Toolkit
     
-#     # 创建Python虚拟环境
-#     echo "正在创建Python虚拟环境..."
-#     uv venv --seed .venv --python 3.12
+    # 创建Python虚拟环境
+    echo "正在创建Python虚拟环境..."
+    uv venv --seed .venv --python 3.12
     
-#     # 激活虚拟环境并安装依赖
-#     echo "正在安装Python依赖..."
-#     source .venv/bin/activate
-#     uv pip install -e .
-#     uv pip install -e '.[langchain]'
-#     uv pip install tavily-python
-#     uv pip install 'httpx[socks]'
+    # 激活虚拟环境并安装依赖
+    echo "正在安装Python依赖..."
+    source .venv/bin/activate
+    uv pip install -e .
+    uv pip install -e '.[langchain]'
+    uv pip install tavily-python
+    uv pip install 'httpx[socks]'
     
-#     echo "✅ 后端依赖安装完成"
+    echo "✅ 后端依赖安装完成"
     
-#     # 返回项目根目录
-#     cd "$PROJECT_ROOT"
-# }
+    # 返回项目根目录
+    cd "$PROJECT_ROOT"
+}
 
 # 设置前端
-# setup_frontend() {
-#     echo "🎨 设置前端..."
+setup_frontend() {
+    echo "🎨 设置前端..."
     
-#     # 检查前端目录是否存在
-#     if [ ! -d "external/aiqtoolkit-opensource-ui" ]; then
-#         echo "❌ 前端目录不存在: external/aiqtoolkit-opensource-ui"
-#         echo "请确保子模块已正确初始化"
-#         exit 1
-#     fi
+    # 检查前端目录是否存在
+    if [ ! -d "external/aiqtoolkit-opensource-ui" ]; then
+        echo "❌ 前端目录不存在: external/aiqtoolkit-opensource-ui"
+        echo "请确保子模块已正确初始化"
+        exit 1
+    fi
     
-#     # 进入前端目录
-#     cd external/aiqtoolkit-opensource-ui
+    # 进入前端目录
+    cd external/aiqtoolkit-opensource-ui
     
-#     echo "正在安装前端依赖..."
-#     npm install
+    echo "正在安装前端依赖..."
+    npm install
     
-#     echo "✅ 前端依赖安装完成"
+    echo "✅ 前端依赖安装完成"
     
-#     # 返回项目根目录
-#     cd ../..
-# }
+    # 返回项目根目录
+    cd ../..
+}
 
 # 创建配置文件
 create_config() {
@@ -175,7 +175,7 @@ llms:
   # 默认使用Bailian API (用户可修改)
   default_llm:
     _type: openai
-    model_name: "qwq-max"
+    model_name: "qwen-plus"
     api_key: "sk-76875d587c1944a3ae299ce1d7ace977"
     base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     temperature: 0.7
